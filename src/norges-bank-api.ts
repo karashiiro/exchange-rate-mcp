@@ -25,7 +25,7 @@ export interface ExchangeRateResponse {
 export async function fetchExchangeRate(
   baseCurrency: string,
   targetCurrency: string,
-  date?: string
+  date?: string,
 ): Promise<ExchangeRateResponse> {
   // Placeholder implementation - will be replaced with actual API call
 

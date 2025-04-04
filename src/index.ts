@@ -29,7 +29,7 @@ async function main() {
         .string()
         .optional()
         .describe(
-          "Optional date in YYYY-MM-DD format. Defaults to latest available rate."
+          "Optional date in YYYY-MM-DD format. Defaults to latest available rate.",
         ),
     },
     async ({ baseCurrency, targetCurrency, date }) => {
@@ -38,7 +38,7 @@ async function main() {
         const exchangeData = await fetchExchangeRate(
           baseCurrency,
           targetCurrency,
-          date
+          date,
         );
 
         return {
@@ -60,7 +60,7 @@ async function main() {
           isError: true,
         };
       }
-    }
+    },
   );
 
   // Start server with stdio transport
