@@ -1,12 +1,20 @@
-/**
- * API client for the Norges Bank exchange rate API
- *
- * This file will contain the implementation for fetching exchange rates
- * from the Norges Bank API. Currently it's a placeholder with types
- * and interfaces defined.
- */
+import fetch from "node-fetch";
 
-// Types for exchange rate data
+// Types for SDMX-JSON response
+interface SDMXResponse {
+  data: {
+    dataSets: Array<{
+      series: {
+        [key: string]: {
+          observations: {
+            [key: string]: `${number}`[];
+          };
+        };
+      };
+    }>;
+  };
+}
+
 export interface ExchangeRateResponse {
   baseCurrency: string;
   targetCurrency: string;
@@ -14,32 +22,107 @@ export interface ExchangeRateResponse {
   rate: number;
 }
 
+interface RateMap {
+  [currency: string]: number;
+}
+
 /**
- * Fetches exchange rate from Norges Bank API
+ * Fetches exchange rates from Norges Bank API for multiple currencies
  *
- * @param baseCurrency The base currency code (e.g., NOK, USD)
- * @param targetCurrency The target currency code (e.g., EUR, USD)
+ * @param currencies Array of currency codes to fetch (e.g., ["USD", "EUR", "JPY"])
+ * @returns Promise with a map of currency codes to their NOK rates
+ * @throws Error if the API request fails
+ */
+async function fetchNokRates(currencies: string[]): Promise<RateMap> {
+  // Filter out NOK if it's in the list since we don't need to fetch it
+  const currenciesToFetch = currencies.filter((c) => c !== "NOK");
+
+  if (currenciesToFetch.length === 0) {
+    return { NOK: 1 };
+  }
+
+  // Construct the API URL with all currencies
+  const baseUrl = "https://data.norges-bank.no/api/data/EXR/B.";
+  const currencyString = currenciesToFetch.join("+");
+  const url = `${baseUrl}${currencyString}.NOK.SP?format=sdmx-json&lastNObservations=1&locale=en`;
+  console.error(url);
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Norges Bank API request failed with status ${response.status}`,
+      );
+    }
+
+    const data = (await response.json()) as SDMXResponse;
+
+    if (!data.data?.dataSets?.[0]?.series) {
+      throw new Error("Invalid response format from Norges Bank API");
+    }
+
+    const rates: RateMap = { NOK: 1 };
+    const series = data.data.dataSets[0].series;
+
+    // Parse rates for each currency
+    Object.entries(series).forEach(([key, value]) => {
+      const observations = value.observations;
+      console.error(observations);
+      const latestObservation = observations[Object.keys(observations)[0]];
+      const rate = parseFloat(latestObservation[0]);
+
+      if (typeof rate !== "number") {
+        throw new Error("Invalid rate value in API response");
+      }
+
+      // Find the index of this currency in the original list
+      const index = parseInt(key.split(":")[1]);
+      const currency = currenciesToFetch[index];
+      rates[currency] = rate;
+    });
+
+    return rates;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch exchange rates: ${error.message}`);
+    }
+    throw new Error("Failed to fetch exchange rates: Unknown error");
+  }
+}
+
+/**
+ * Fetches exchange rate between any two currencies
+ *
+ * @param baseCurrency The base currency code (e.g., USD, EUR)
+ * @param targetCurrency The target currency code (e.g., JPY, GBP)
  * @param date Optional date in YYYY-MM-DD format. Defaults to latest available rate.
  * @returns Promise with exchange rate data
+ * @throws Error if currencies are invalid or API request fails
  */
 export async function fetchExchangeRate(
   baseCurrency: string,
   targetCurrency: string,
   date?: string,
 ): Promise<ExchangeRateResponse> {
-  // Placeholder implementation - will be replaced with actual API call
+  // Get rates for both currencies relative to NOK
+  const rates = await fetchNokRates([baseCurrency, targetCurrency]);
 
-  // TODO: Implement actual Norges Bank API integration
-  // - Validate currency codes
-  // - Format date appropriately for API
-  // - Make API request to Norges Bank
-  // - Parse response and return formatted data
+  if (!(baseCurrency in rates) || !(targetCurrency in rates)) {
+    throw new Error(
+      "One or both currencies not available from Norges Bank API",
+    );
+  }
 
-  // Return dummy data for now
+  // Calculate cross rate:
+  // If converting USD to EUR and we have USD/NOK and EUR/NOK rates,
+  // then USD/EUR = (USD/NOK) / (EUR/NOK)
+  const rate = rates[baseCurrency] / rates[targetCurrency];
+
   return {
     baseCurrency,
     targetCurrency,
     date: date || new Date().toISOString().split("T")[0],
-    rate: 0.12345,
+    rate,
   };
 }
