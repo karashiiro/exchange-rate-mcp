@@ -214,5 +214,221 @@ describe("Norges Bank API", () => {
         fetchExchangeRate(baseCurrency, targetCurrency),
       ).rejects.toThrow("Invalid response format from Norges Bank API");
     });
+
+    it("should handle currencies with different base units 1 (e.g., JPY per 100)", async () => {
+      // Arrange
+      const baseCurrency = "JPY";
+      const targetCurrency = "USD";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["7.2755"], // JPY/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo(7.2755 / 10.5648 / 100);
+    });
+
+    it("should handle currencies with different base units 2 (e.g., JPY per 100)", async () => {
+      // Arrange
+      const baseCurrency = "USD";
+      const targetCurrency = "JPY";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["7.2755"], // JPY/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo((10.5648 / 7.2755) * 100);
+    });
+
+    it("should handle KRW quoted per 100 units 1", async () => {
+      // Arrange
+      const baseCurrency = "KRW";
+      const targetCurrency = "USD";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["0.7296"], // KRW/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo(0.7296 / 10.5648 / 100);
+    });
+
+    it("should handle KRW quoted per 100 units 2", async () => {
+      // Arrange
+      const baseCurrency = "USD";
+      const targetCurrency = "KRW";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["0.7296"], // KRW/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo((10.5648 / 0.7296) * 100);
+    });
+
+    it("should handle IDR quoted per 100 units 1", async () => {
+      // Arrange
+      const baseCurrency = "IDR";
+      const targetCurrency = "USD";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["0.062299"], // IDR/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo(0.062299 / 10.5648 / 100);
+    });
+
+    it("should handle IDR quoted per 100 units 2", async () => {
+      // Arrange
+      const baseCurrency = "USD";
+      const targetCurrency = "IDR";
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: {
+              dataSets: [
+                {
+                  series: {
+                    "0:0:0:0": {
+                      observations: {
+                        "0": ["10.5648"], // USD/NOK rate
+                      },
+                    },
+                    "0:1:0:0": {
+                      observations: {
+                        "0": ["0.062299"], // IDR/NOK rate
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          }),
+      } as any);
+
+      // Act
+      const result = await fetchExchangeRate(baseCurrency, targetCurrency);
+
+      // Assert
+      expect(result.rate).toBeCloseTo((10.5648 / 0.062299) * 100);
+    });
   });
 });

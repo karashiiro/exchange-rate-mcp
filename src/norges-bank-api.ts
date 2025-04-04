@@ -26,6 +26,15 @@ interface RateMap {
   [currency: string]: number;
 }
 
+// Mapping of currencies to their corresponding reference denominations.
+// Not sure if there's a comprehensive list of these somewhere.
+// Each currency is quoted per X units where X is the value below
+const CURRENCY_REFERENCE_DENOMINATION: { [key: string]: number } = {
+  JPY: 100,
+  KRW: 100,
+  IDR: 100,
+};
+
 /**
  * Fetches exchange rates from Norges Bank API for multiple currencies
  *
@@ -70,7 +79,7 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
       const observations = value.observations;
       console.error(observations);
       const latestObservation = observations[Object.keys(observations)[0]];
-      const rate = parseFloat(latestObservation[0]);
+      let rate = parseFloat(latestObservation[0]);
 
       if (typeof rate !== "number") {
         throw new Error("Invalid rate value in API response");
@@ -79,6 +88,12 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
       // Find the index of this currency in the original list
       const index = parseInt(key.split(":")[1]);
       const currency = currenciesToFetch[index];
+
+      // Adjust rate based on target's reference denomination
+      if (currency in CURRENCY_REFERENCE_DENOMINATION) {
+        rate /= CURRENCY_REFERENCE_DENOMINATION[currency];
+      }
+
       rates[currency] = rate;
     });
 
