@@ -12,6 +12,16 @@ interface SDMXResponse {
         };
       };
     }>;
+    structure: {
+      dimensions: {
+        series: Array<{
+          id: string;
+          values: Array<{
+            id: string;
+          }>;
+        }>;
+      };
+    };
   };
 }
 
@@ -74,6 +84,17 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
     const rates: RateMap = { NOK: 1 };
     const series = data.data.dataSets[0].series;
 
+    // Get the series structure to find the currency codes
+    const seriesStructure = data.data.structure.dimensions.series.find(
+      (s) => s.id === "BASE_CUR",
+    )?.values;
+    if (!seriesStructure) {
+      throw new Error("Invalid series structure in API response");
+    }
+
+    const seriesCodes = seriesStructure.map((s) => s.id);
+    console.error(seriesCodes);
+
     // Parse rates for each currency
     Object.entries(series).forEach(([key, value]) => {
       const observations = value.observations;
@@ -87,7 +108,7 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
 
       // Find the index of this currency in the original list
       const index = parseInt(key.split(":")[1]);
-      const currency = currenciesToFetch[index];
+      const currency = seriesCodes[index];
 
       // Adjust rate based on target's reference denomination
       if (currency in CURRENCY_REFERENCE_DENOMINATION) {

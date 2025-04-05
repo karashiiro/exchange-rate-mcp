@@ -33,6 +33,16 @@ describe("Norges Bank API", () => {
             },
           },
         ],
+        structure: {
+          dimensions: {
+            series: [
+              {
+                id: "BASE_CUR",
+                values: [{ id: "USD" }, { id: "EUR" }],
+              },
+            ],
+          },
+        },
       },
     };
 
@@ -79,6 +89,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -110,6 +130,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -135,6 +165,16 @@ describe("Norges Bank API", () => {
                   series: {},
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -240,6 +280,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "JPY" }, { id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -276,6 +326,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }, { id: "JPY" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -312,6 +372,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "KRW" }, { id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -348,6 +418,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }, { id: "KRW" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -384,6 +464,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "IDR" }, { id: "USD" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
@@ -420,6 +510,16 @@ describe("Norges Bank API", () => {
                   },
                 },
               ],
+              structure: {
+                dimensions: {
+                  series: [
+                    {
+                      id: "BASE_CUR",
+                      values: [{ id: "USD" }, { id: "IDR" }],
+                    },
+                  ],
+                },
+              },
             },
           }),
       } as any);
