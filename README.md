@@ -6,12 +6,6 @@ This is a Model Context Protocol (MCP) server that provides access to exchange r
 
 The Exchange Rate MCP exposes a single tool called `exchange_rate` that allows an LLM or other clients to fetch exchange rates between different currencies.
 
-## Features
-
-- Fetch real-time exchange rates (to be implemented with Norges Bank API)
-- Convert between different currencies
-- Retrieve historical exchange rates by specifying a date
-
 ## Installation
 
 ```bash
@@ -54,10 +48,3 @@ Fetches the exchange rate between two currencies.
   "rate": 0.12345
 }
 ```
-
-## Future Enhancements
-
-- Implement actual Norges Bank API integration
-- Add support for currency lists
-- Add support for currency conversions with amounts
-- Add historical rate charts
