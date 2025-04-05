@@ -15,8 +15,8 @@ const server = new McpServer({
 // Add exchange_rate tool
 server.tool(
   "exchange_rate",
+  "Retrieves exchange rates using Norges Bank's API. Returns rate information including the base currency, target currency, date, and conversion rate.",
   {
-    // Tool parameters
     baseCurrency: z
       .string()
       .describe("The base currency code (e.g., NOK, USD)"),
@@ -30,13 +30,13 @@ server.tool(
         "Optional date in YYYY-MM-DD format. Defaults to latest available rate.",
       ),
   },
-  async ({ baseCurrency, targetCurrency, date }) => {
+  async (args, _extra) => {
     try {
       // Call the Norges Bank API client
       const exchangeData = await fetchExchangeRate(
-        baseCurrency,
-        targetCurrency,
-        date,
+        args.baseCurrency,
+        args.targetCurrency,
+        args.date,
       );
 
       return {
