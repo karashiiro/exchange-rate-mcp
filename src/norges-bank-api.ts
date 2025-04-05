@@ -64,7 +64,6 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
   const baseUrl = "https://data.norges-bank.no/api/data/EXR/B.";
   const currencyString = currenciesToFetch.join("+");
   const url = `${baseUrl}${currencyString}.NOK.SP?format=sdmx-json&lastNObservations=1&locale=en`;
-  console.error(url);
 
   try {
     const response = await fetch(url);
@@ -93,12 +92,10 @@ async function fetchNokRates(currencies: string[]): Promise<RateMap> {
     }
 
     const seriesCodes = seriesStructure.map((s) => s.id);
-    console.error(seriesCodes);
 
     // Parse rates for each currency
     Object.entries(series).forEach(([key, value]) => {
       const observations = value.observations;
-      console.error(observations);
       const latestObservation = observations[Object.keys(observations)[0]];
       let rate = parseFloat(latestObservation[0]);
 
