@@ -1,5 +1,5 @@
 {
-  "name": "exchange-rate-mcp",
+  "name": "@karashiiro/exchange-rate-mcp",
   "version": "1.0.0",
   "description": "MCP server providing exchange rate data from Norges Bank API",
   "main": "dist/index.js",
