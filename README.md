@@ -2,6 +2,8 @@
 
 This is a Model Context Protocol (MCP) server that provides access to exchange rate data from the Norges Bank API.
 
+This is just a toy project and isn't meant to be used seriously.
+
 ## Overview
 
 The Exchange Rate MCP exposes a single tool called `exchange_rate` that allows an LLM or other clients to fetch exchange rates between different currencies.
